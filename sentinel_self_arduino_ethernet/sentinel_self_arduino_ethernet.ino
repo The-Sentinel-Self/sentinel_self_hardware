@@ -5,10 +5,11 @@
  *  Grove Ear-Clip Heart Rate Sensor.
  *
  *  Before uploading to the Feather, check the
- *  MAC and static IP addresses are correct
- *  for the system ID (lines 43 & 44), and
- *  that the OSC address matches too
- *  (lines 147, 155, 163) [!check].
+ *  MAC, static IP address, and port are correct
+ *  for the system, (lines 48, 49), the receiver
+ *  IP and port are correct for the system ID and device 
+ *  (lines 52 & 53) and that the OSC address matches 
+ *  the system ID too (lines 150, 158, 166) [!check].
  *
  *  Sam Bilbow (c) 2022
  *  for the Sentinel Immune Self Project
@@ -37,11 +38,11 @@ PulseSensorPlayground pulseSensor;
 // ----------
 // Variables
 // ----------
-// Reference for system MAC / Static IP
-// System 1  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 - 192, 168, 0, 201
-// System 2  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD5 - 192, 168, 0, 202
-// System 3  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0x9B - 192, 168, 0, 203
-// System 4  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 - 192, 168, 0, 204
+// Reference for system MAC / Static IP / Receiver Port
+// System 1  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 - 192, 168, 0, 201 - 9001
+// System 2  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD5 - 192, 168, 0, 202 - 9002
+// System 3  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0x9B - 192, 168, 0, 203 - 9003
+// System 4  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 - 192, 168, 0, 204 - 9004
 
 // Static IP address and MAC of the sending Feather
 byte mac[] = { 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 };
@@ -56,7 +57,7 @@ byte gateway[] = { 192, 168, 0, 1 };
 byte subnet[] = { 255, 255, 255, 0 };
 
 // Set the variables for the Heart Rate Sensor
-const int OUTPUT_TYPE = SERIAL_PLOTTER;
+const int OUTPUT_TYPE = SERIAL_PLOTTER; // [!remove?]
 const int PULSE_INPUT = 26;     // GPIO for Analog Pin 0
 const int PULSE_BLINK = 13;     // Pin 13 is the on-board LED
 const int PULSE_FADE = 5;       // Set time (ms) for LED fade
