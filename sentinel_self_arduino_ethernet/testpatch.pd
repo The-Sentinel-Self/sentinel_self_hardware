@@ -1,8 +1,8 @@
 #N canvas 2122 1148 398 160 12;
-#X obj 28 44 oscparse;
-#X obj 28 20 netreceive -u -b 7539;
-#X obj 28 68 print;
-#X floatatom 93 43 5 0 0 0 - - -;
+#X obj 28 93 oscparse;
+#X floatatom 93 93 5 0 0 0 - - -;
+#X obj 28 116 print;
+#X obj 28 72 netreceive -u -b 9003;
 #X connect 0 0 2 0;
-#X connect 1 0 0 0;
-#X connect 1 0 3 0;
+#X connect 3 0 0 0;
+#X connect 3 0 1 0;

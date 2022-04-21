@@ -45,12 +45,12 @@ PulseSensorPlayground pulseSensor;
 // System 4  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 - 192, 168, 0, 204 - 9004
 
 // Static IP address and MAC of the sending Feather
-byte mac[] = { 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 };
-byte ip[] = {192, 168, 0, 204};
+byte mac[] = { 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 };
+byte ip[] = {192, 168, 0, 201};
 
 // Static IP address and port of the receiving Workstation
 byte receiverIP[] = {192, 168, 0, 18};
-const unsigned int receiverPort = 9004;
+const unsigned int receiverPort = 9001;
 
 // Set the router gateway IP and subnet [!check if necessary]
 byte gateway[] = { 192, 168, 0, 1 };
@@ -72,11 +72,11 @@ const byte SAMPLES_PER_SERIAL_SAMPLE = 10;
 // Setup - Initialise Serial / Ethernet / UDP connection, begin Pulse Sensor readings
 // ----------
 void setup() {
-  // // Open serial communications and wait for port to open before carrying on
-  // Serial.begin(115200);
-  // while (!Serial) {
-  //   ;
-  // }
+   // Open serial communications and wait for port to open before carrying on
+   Serial.begin(115200);
+   while (!Serial) {
+     ;
+   }
 
   // Initialise ethernet on CS pin (33 for ESP32 with Adafruit Featherwing Ethernet)
   Ethernet.init(33);
@@ -98,9 +98,9 @@ void setup() {
   // Begin UDP from system port 9000
   Udp.begin(9000);
 
-  // // Print IP details to serial monitor
-  // Serial.print("Sentinel is at ");
-  // Serial.println(Ethernet.localIP());
+  // Print IP details to serial monitor
+  Serial.print("Sentinel is at ");
+  Serial.println(Ethernet.localIP());
 
   // Configure the PulseSensor manager.
   pulseSensor.analogInput(PULSE_INPUT);
@@ -147,29 +147,29 @@ void loop() {
       }
 
       // Create and send UDP packets using OSC protocol to the Receiver IP/Port using a system specific address.
-      OSCMessage rate("/sentinel/4/rate");                      // Create OSC message for heart rate with address
-      rate.add(pulseSensor.getBeatsPerMinute());                // Add the latest BPM value from the sensor to the message
-      // Serial.println(pulseSensor.getBeatsPerMinute());          // Print the latest BPM value to serial
-      Udp.beginPacket(receiverIP, receiverPort);                // Begin the UDP packet for the OSC message
-      rate.send(Udp);                                           // Send the bytes to the SLIP stream
-      Udp.endPacket();                                          // Mark the end of the OSC Packet
-      rate.empty();                                             // Free space occupied by message
+      OSCMessage rate("/sentinel/1/rate");                                // Create OSC message for heart rate with address
+      rate.add((int32_t)pulseSensor.getBeatsPerMinute());                 // Add the latest BPM value from the sensor to the message
+//      Serial.println((int32_t)pulseSensor.getBeatsPerMinute());           // Print the latest BPM value to serial
+      Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
+      rate.send(Udp);                                                     // Send the bytes to the SLIP stream
+      Udp.endPacket();                                                    // Mark the end of the OSC Packet
+      rate.empty();                                                       // Free space occupied by message
 
-      OSCMessage ibi("/sentinel/4/ibi");                        // Create OSC message for IBI with address
-      ibi.add(pulseSensor.getInterBeatIntervalMs());            // Add the latest BPM value from the sensor to the message
-      // Serial.println(pulseSensor.getInterBeatIntervalMs());     // Print the latest BPM value to serial
-      Udp.beginPacket(receiverIP, receiverPort);                // Begin the UDP packet for the OSC message
-      ibi.send(Udp);                                            // Send the bytes to the SLIP stream
-      Udp.endPacket();                                          // Mark the end of the OSC Packet
-      ibi.empty();                                              // Free space occupied by message
+      OSCMessage ibi("/sentinel/1/ibi");                                  // Create OSC message for IBI with address
+      ibi.add((int32_t)pulseSensor.getInterBeatIntervalMs());             // Add the latest BPM value from the sensor to the message
+//      Serial.println((int32_t)pulseSensor.getInterBeatIntervalMs());      // Print the latest BPM value to serial
+      Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
+      ibi.send(Udp);                                                      // Send the bytes to the SLIP stream
+      Udp.endPacket();                                                    // Mark the end of the OSC Packet
+      ibi.empty();                                                        // Free space occupied by message
 
-      OSCMessage pulse("/sentinel/4/pulse");                    // Create OSC message for pulse with address
-      pulse.add(pulseSensor.getLatestSample());                 // Add the latest BPM value from the sensor to the message
-      // Serial.println(pulseSensor.getLatestSample());            // Print the latest BPM value to serial
-      Udp.beginPacket(receiverIP, receiverPort);                // Begin the UDP packet for the OSC message
-      pulse.send(Udp);                                          // Send the bytes to the SLIP stream
-      Udp.endPacket();                                          // Mark the end of the OSC Packet
-      pulse.empty();                                            // Free space occupied by message
+      OSCMessage pulse("/sentinel/1/pulse");                              // Create OSC message for pulse with address
+      pulse.add((int32_t)pulseSensor.getLatestSample());                  // Add the latest BPM value from the sensor to the message
+//      Serial.println((int32_t)pulseSensor.getLatestSample());             // Print the latest BPM value to serial
+      Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
+      pulse.send(Udp);                                                    // Send the bytes to the SLIP stream
+      Udp.endPacket();                                                    // Mark the end of the OSC Packet
+      pulse.empty();                                                      // Free space occupied by message
     }
   }
 }
