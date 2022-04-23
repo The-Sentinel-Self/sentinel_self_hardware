@@ -1,2 +1,2 @@
-# sentinel_self_arduino
- Arduino code for Sentinel Self Project
+# sentinel_self_hardware
+ Arduino code / CAD for Sentinel Self Project
