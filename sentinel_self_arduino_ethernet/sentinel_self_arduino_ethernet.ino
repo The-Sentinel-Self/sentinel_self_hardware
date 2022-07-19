@@ -46,10 +46,10 @@ PulseSensorPlayground pulseSensor;
 
 // Static IP address and MAC of the sending Feather
 byte mac[] = { 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 };
-byte ip[] = {192, 168, 0, 201};
+byte ip[] = {169, 254, 125, 201};
 
 // Static IP address and port of the receiving Workstation
-byte receiverIP[] = {192, 168, 0, 18};
+byte receiverIP[] = {169, 254, 125, 200};
 const unsigned int receiverPort = 9001;
 
 // Set the router gateway IP and subnet [!check if necessary]
