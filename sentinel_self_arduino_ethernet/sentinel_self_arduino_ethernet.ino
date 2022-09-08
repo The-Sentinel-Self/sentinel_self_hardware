@@ -38,23 +38,23 @@ PulseSensorPlayground pulseSensor;
 // ----------
 // Variables
 // ----------
-// Reference for system MAC / Static IP / Receiver Port
-// System 1  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 - 192, 168, 0, 201 - 9001
-// System 2  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD5 - 192, 168, 0, 202 - 9002
-// System 3  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0x9B - 192, 168, 0, 203 - 9003
-// System 4  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 - 192, 168, 0, 204 - 9004
+// Reference for system MAC / Receiver Port
+// System 1  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 - 9001
+// System 2  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD5 - 9002
+// System 3  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0x9B - 9003
+// System 4  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 - 9004
 
 // Static IP address and MAC of the sending Feather
 byte mac[] = { 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 };
-byte ip[] = {169, 254, 125, 201};
+byte ip[] = {192, 168, 0, 201};
 
 // Static IP address and port of the receiving Workstation
-byte receiverIP[] = {169, 254, 125, 200};
+byte receiverIP[] = {169, 254, 31, 247};
 const unsigned int receiverPort = 9001;
 
 // Set the router gateway IP and subnet [!check if necessary]
-byte gateway[] = { 192, 168, 0, 1 };
-byte subnet[] = { 255, 255, 255, 0 };
+//byte gateway[] = { 192, 168, 0, 1 };
+//byte subnet[] = { 255, 255, 255, 0 };
 
 // Set the variables for the Heart Rate Sensor
 const int OUTPUT_TYPE = SERIAL_PLOTTER; // [!remove?]
@@ -82,7 +82,7 @@ void setup() {
   Ethernet.init(33);
 
   // Start the Ethernet connection
-  Ethernet.begin(mac, ip, gateway, subnet);
+  Ethernet.begin(mac, ip);
 
   // Check for Ethernet hardware present
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
