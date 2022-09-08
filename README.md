@@ -1,5 +1,5 @@
 # Sentinel Self (Sensor Implementation)
-The Arduino sketch contained in this repository allows for the interfacing of a heart rate sensor with the corresponding Unity project found in the [main Sentinel project](https://github.com/The-Sentinel-Self/TheSentinelSelf). The sketch extracts real-time data from the sensor, wraps it in an OSC message and sends it to a specific IP address that is specified in the script.
+The Arduino sketch contained in this repository allows for the interfacing of a heart rate sensor with the corresponding Unity project found in the [main Sentinel project](https://github.com/The-Sentinel-Self/TheSentinelSelf). The sketch extracts real-time data from the sensor, wraps it in an OSC message and sends it to a port on a specific IP address that is specified in the script.
 
 ### Note
 If using multiple sensors in an installation, make sure you upload sketches with the corresponding MAC address found on the side of the 3D printed enclosure (these can be found commented in the Arudino sketch code)
