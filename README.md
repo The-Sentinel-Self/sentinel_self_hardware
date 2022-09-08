@@ -43,7 +43,7 @@ If using multiple sensors in an installation, make sure you upload sketches with
 - The ethernet switch is likely to be the one starting in `239..` or `169...`
 - Note down this address in its entirety e.g. `169.254.31.247`
 
-4.2 (if using router) Note down your router gateway, e.g. `192.168.0.1`
+4.2 (if using router) Find the IP address of the workstation on the network
 - Use Windows search to open Command Prompt by typing `cmd`
 - Enter `ipconfig` to get a list of your device's IP addresses
 - Note down your device's local IP address, e.g. `192.168.0.30` (is a good idea to set this as a static IP address from your router's settings so that you dont have to change the Arduino sketch each time it changes)
