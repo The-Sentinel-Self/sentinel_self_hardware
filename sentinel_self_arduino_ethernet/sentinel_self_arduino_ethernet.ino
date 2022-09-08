@@ -6,10 +6,10 @@
  *
  *  Before uploading to the Feather, check the
  *  MAC, static IP address, and port are correct
- *  for the system, (lines 48, 49), the receiver
+ *  for the system, the receiver
  *  IP and port are correct for the system ID and device 
- *  (lines 52 & 53) and that the OSC address matches 
- *  the system ID too (lines 150, 158, 166) [!check].
+ *  and that the OSC address matches 
+ *  the system ID too.
  *
  *  Sam Bilbow (c) 2022
  *  for the Sentinel Immune Self Project
