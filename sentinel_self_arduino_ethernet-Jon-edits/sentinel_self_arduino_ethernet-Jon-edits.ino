@@ -1,4 +1,4 @@
- /* 
+/* 
  *  Sentinel Immune Self (OSC via Ethernet)
  *  for use with Adafruit's Feather ESP32 V2,
  *  Adafruit Ethernet Featherwing, and Seeed
@@ -15,6 +15,8 @@
  *  for the Sentinel Immune Self Project
  *  by Sissel Marie Tonn.
  *  www.sambilbow.com 
+ *
+ *  Modifications by Jonathan Reus 9 Oct 2023
 */
 
 
@@ -46,12 +48,19 @@ PulseSensorPlayground pulseSensor;
 
 // Static IP address and MAC of the sending Feather
 byte mac[] = { 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 };
-byte ip[] = {192, 168, 0, 201};
+//byte ip[] = {192, 168, 0, 201}; // for Workstation
+byte ip[] = {169, 254, 26, 201}; // for Sissel's laptop
 
-// Static IP address and port of the receiving Workstation
+
+// Static IP address and port of OSC server on the Workstation
 //byte receiverIP[] = {169, 254, 31, 247};
-byte receiverIP[] = {192,168,1,15};
-const unsigned int receiverPort = 9001;
+//const unsigned int receiverPort = 9001;
+
+// IP address and port of OSC server on Sissel's laptop
+byte receiverIP[] = {169, 254, 26, 162};
+const unsigned int receiverPort = 9001; // test a different port
+
+bool ETHERNET_ENABLED = true; // is set to false if ethernet connection problems happen
 
 // Set the router gateway IP and subnet [!check if necessary]
 //byte gateway[] = { 192, 168, 0, 1 };
@@ -79,6 +88,9 @@ void setup() {
      ;
    }
 
+   delay(1000); // add for stability
+   Serial.println("Hello World");
+
   // Initialise ethernet on CS pin (33 for ESP32 with Adafruit Featherwing Ethernet)
   Ethernet.init(33);
 
@@ -88,20 +100,28 @@ void setup() {
   // Check for Ethernet hardware present
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
     Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-    while (true) {
-      delay(1);
+    ETHERNET_ENABLED=false;
+    for (;;) {
+      // Flash the led to show things didn't work
+      digitalWrite(PULSE_BLINK, LOW);
+      delay(150);
+      digitalWrite(PULSE_BLINK, HIGH);
+      delay(150);
     }
   }
   if (Ethernet.linkStatus() == LinkOFF) {
     Serial.println("Ethernet cable is not connected.");
+    ETHERNET_ENABLED=false;
   }
 
-  // Begin UDP from system port 9000
-  Udp.begin(9000);
+  if(ETHERNET_ENABLED) {
+    // Begin UDP from system port 9000
+    Udp.begin(9000);
 
-  // Print IP details to serial monitor
-  Serial.print("Sentinel is at ");
-  Serial.println(Ethernet.localIP());
+    // Print IP details to serial monitor
+    Serial.print("Sentinel is at ");
+    Serial.println(Ethernet.localIP());
+  }
 
   // Configure the PulseSensor manager.
   pulseSensor.analogInput(PULSE_INPUT);
@@ -116,6 +136,7 @@ void setup() {
 
   // Now that everything is ready, start reading the PulseSensor signal
   if (!pulseSensor.begin()) {
+    Serial.println("Cannot initialized Pulse Sensor.");
     for (;;) {
       // Flash the led to show things didn't work
       digitalWrite(PULSE_BLINK, LOW);
@@ -147,30 +168,32 @@ void loop() {
         pulseSensor.outputBeat();
       }
 
-      // Create and send UDP packets using OSC protocol to the Receiver IP/Port using a system specific address.
-      OSCMessage rate("/sentinel/1/rate");                                // Create OSC message for heart rate with address
-      rate.add((int32_t)pulseSensor.getBeatsPerMinute());                 // Add the latest BPM value from the sensor to the message
-//      Serial.println((int32_t)pulseSensor.getBeatsPerMinute());           // Print the latest BPM value to serial
-      Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
-      rate.send(Udp);                                                     // Send the bytes to the SLIP stream
-      Udp.endPacket();                                                    // Mark the end of the OSC Packet
-      rate.empty();                                                       // Free space occupied by message
+      if(ETHERNET_ENABLED) {
+        // Create and send UDP packets using OSC protocol to the Receiver IP/Port using a system specific address.
+        OSCMessage rate("/sentinel/1/rate");                                // Create OSC message for heart rate with address
+        rate.add((int32_t)pulseSensor.getBeatsPerMinute());                 // Add the latest BPM value from the sensor to the message
+        Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
+        rate.send(Udp);                                                     // Send the bytes to the SLIP stream
+        Udp.endPacket();                                                    // Mark the end of the OSC Packet
+        rate.empty();                                                       // Free space occupied by message
+        //Serial.println((int32_t)pulseSensor.getBeatsPerMinute());           // Print the latest BPM value to serial
 
-      OSCMessage ibi("/sentinel/1/ibi");                                  // Create OSC message for IBI with address
-      ibi.add((int32_t)pulseSensor.getInterBeatIntervalMs());             // Add the latest BPM value from the sensor to the message
-//      Serial.println((int32_t)pulseSensor.getInterBeatIntervalMs());      // Print the latest BPM value to serial
-      Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
-      ibi.send(Udp);                                                      // Send the bytes to the SLIP stream
-      Udp.endPacket();                                                    // Mark the end of the OSC Packet
-      ibi.empty();                                                        // Free space occupied by message
+        OSCMessage ibi("/sentinel/1/ibi");                                  // Create OSC message for IBI with address
+        ibi.add((int32_t)pulseSensor.getInterBeatIntervalMs());             // Add the latest BPM value from the sensor to the message
+        Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
+        ibi.send(Udp);                                                      // Send the bytes to the SLIP stream
+        Udp.endPacket();                                                    // Mark the end of the OSC Packet
+        ibi.empty();                                                        // Free space occupied by message
+        //Serial.println((int32_t)pulseSensor.getInterBeatIntervalMs());      // Print the latest BPM value to serial
 
-      OSCMessage pulse("/sentinel/1/pulse");                              // Create OSC message for pulse with address
-      pulse.add((int32_t)pulseSensor.getLatestSample());                  // Add the latest BPM value from the sensor to the message
-//      Serial.println((int32_t)pulseSensor.getLatestSample());             // Print the latest BPM value to serial
-      Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
-      pulse.send(Udp);                                                    // Send the bytes to the SLIP stream
-      Udp.endPacket();                                                    // Mark the end of the OSC Packet
-      pulse.empty();                                                      // Free space occupied by message
+        OSCMessage pulse("/sentinel/1/pulse");                              // Create OSC message for pulse with address
+        pulse.add((int32_t)pulseSensor.getLatestSample());                  // Add the latest BPM value from the sensor to the message
+        Udp.beginPacket(receiverIP, receiverPort);                          // Begin the UDP packet for the OSC message
+        pulse.send(Udp);                                                    // Send the bytes to the SLIP stream
+        Udp.endPacket();                                                    // Mark the end of the OSC Packet
+        pulse.empty();                                                      // Free space occupied by message  
+        //Serial.println((int32_t)pulseSensor.getLatestSample());             // Print the latest BPM value to serial
+      }
     }
   }
 }
