@@ -46,19 +46,17 @@ PulseSensorPlayground pulseSensor;
 // System 3  - 0x98, 0x76, 0xB6, 0x11, 0xEC, 0x9B - 9003
 // System 4  - 0x98, 0x76, 0xB6, 0x11, 0xEE, 0xD9 - 9004
 
-// Static IP address and MAC of the sending Feather
+// Static IP address and port of OSC server on the Workstation (copy from 'arp -a' on command line)
+byte receiverIP[] = {169,254,184,134}; // workstation as of 12 Oct 2023 at SeeLab
+//byte receiverIP[] = {169, 254, 26, 162}; // sissel's laptop
+const unsigned int receiverPort = 9001;
+
+
+// My Static IP address and MAC (this Feather ESP)
 byte mac[] = { 0x98, 0x76, 0xB6, 0x11, 0xEC, 0xF8 };
-//byte ip[] = {192, 168, 0, 201}; // for Workstation
-byte ip[] = {169, 254, 26, 201}; // for Sissel's laptop
+byte ip[] = {169,254,184,201}; // IP of Feather according to Workstation as of 12 Oct 2023 at SeeLab
+//byte ip[] = {169, 254, 26, 201}; // IP of Feather according to Sissel's laptop
 
-
-// Static IP address and port of OSC server on the Workstation
-//byte receiverIP[] = {169, 254, 31, 247};
-//const unsigned int receiverPort = 9001;
-
-// IP address and port of OSC server on Sissel's laptop
-byte receiverIP[] = {169, 254, 26, 162};
-const unsigned int receiverPort = 9001; // test a different port
 
 bool ETHERNET_ENABLED = true; // is set to false if ethernet connection problems happen
 
